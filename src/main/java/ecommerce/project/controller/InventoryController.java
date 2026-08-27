@@ -5,7 +5,6 @@ import ecommerce.project.dto.inventory.InventoryResponse;
 import ecommerce.project.service.InventoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +27,7 @@ public class InventoryController {
     }
     @GetMapping
     public ResponseEntity<List<InventoryResponse>> getAll(){
-        return ResponseEntity.ok(inventoryService.getall());
+        return ResponseEntity.ok(inventoryService.getAll());
     }
     @PutMapping("{id}")
     public ResponseEntity<InventoryResponse> update(@RequestBody @Valid InventoryRequest request, @PathVariable UUID id){

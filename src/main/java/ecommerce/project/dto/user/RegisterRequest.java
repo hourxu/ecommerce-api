@@ -1,8 +1,8 @@
-package ecommerce.project.dto.User;
+package ecommerce.project.dto.user;
 
 public record RegisterRequest(
         String username,
-        String gmail,
+        String email,
         String password
 ) {
 }

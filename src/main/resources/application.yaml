@@ -4,8 +4,8 @@ spring:
     name: ecommerce
   datasource:
     url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/ecommerce}
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:hourkk12}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:123456}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -13,6 +13,10 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: true
+    show-sql: false
 server:
   port: 8081
+app:
+  jwt:
+    secret-key: fjaskhdfalskfhlaksfhlaksfa123456
+    expire-seconds: 864400

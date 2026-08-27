@@ -1,11 +1,8 @@
 package ecommerce.project.entity;
 
-import ecommerce.project.dto.User.Role;
+import ecommerce.project.dto.user.Role;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
@@ -13,7 +10,8 @@ import java.util.UUID;
 @Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Builder
 public class User {
     @Id
@@ -21,7 +19,7 @@ public class User {
     private UUID id;
     @Column(unique = true)
     private String username;
-    private String gmail;
+    private String email;
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;

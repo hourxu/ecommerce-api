@@ -1,7 +1,7 @@
-package ecommerce.project.dto.User;
+package ecommerce.project.dto.user;
 
 public record LoginRequest(
-        String gmail,
+        String email,
         String password
 ) {
 }

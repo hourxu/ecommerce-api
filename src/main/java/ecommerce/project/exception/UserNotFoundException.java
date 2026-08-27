@@ -2,8 +2,8 @@ package ecommerce.project.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class UserNotFoundException extends BusinessException{
+public class UserNotFoundException extends ResourceNotFoundException{
     public UserNotFoundException() {
-        super("user not found", "USER_NOT_FOUND", HttpStatus.NOT_FOUND);
+        super( "USER_NOT_FOUND","user not found");
     }
 }

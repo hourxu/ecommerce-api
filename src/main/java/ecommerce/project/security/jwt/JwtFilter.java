@@ -1,7 +1,6 @@
-package ecommerce.project.Security;
+package ecommerce.project.security.jwt;
 
-import ecommerce.project.Security.Jwt;
-import ecommerce.project.dto.User.Role;
+import ecommerce.project.dto.user.Role;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final Jwt jwt;
+    private final JwtService jwtService;
 
     @Override
     protected void doFilterInternal(
@@ -39,17 +38,17 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
 
         try {
-            String gmail = jwt.getGmail(token);
-            Role role = jwt.getRole(token);
+            String email = jwtService.getEmail(token);
+            List<String> role = jwtService.getAuthorities(token);
 
             SimpleGrantedAuthority authority =
                     new SimpleGrantedAuthority(
-                            "ROLE_" + role.name()
+                            role.getFirst()
                     );
 
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
-                            gmail,
+                            email,
                             null,
                             List.of(authority)
                     );

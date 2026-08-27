@@ -2,12 +2,11 @@ package ecommerce.project.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class ProductNotFoundException extends BusinessException{
+public class ProductNotFoundException extends ResourceNotFoundException{
     public ProductNotFoundException(){
         super(
-                "Product not found",
-                "Product not found",
-                HttpStatus.NOT_FOUND
+                "PRODUCT_NOT_FOUND",
+                "product not found"
         );
     }
 }

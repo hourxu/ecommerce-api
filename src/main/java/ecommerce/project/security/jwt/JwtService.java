@@ -1,23 +1,26 @@
-package ecommerce.project.Security;
+package ecommerce.project.security.jwt;
 
-import ecommerce.project.dto.User.Role;
+import ecommerce.project.dto.user.Role;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Component
-public class Jwt {
+@RequiredArgsConstructor
+public class JwtService {
 
-    private final String secretKey = "fjaskhdfalskfhlaksfhlaksfa123456";
+    private final JwtProperties jwtProperties;
 
     private SecretKey getKey(){
         return Keys.hmacShaKeyFor(
-                secretKey.getBytes(StandardCharsets.UTF_8)
+                jwtProperties.secretKey().getBytes(StandardCharsets.UTF_8)
         );
     }
     public String generateToken(
@@ -27,32 +30,32 @@ public class Jwt {
     ){
         return Jwts.builder()
                 .subject(userid.toString())
-                .claim("gmail",gmail)
-                .claim("role",role)
+                .claim("email",gmail)
+                .claim("authorities", List.of("ROLE_"+role.name()))
                 .issuedAt(new Date())
                 .expiration(
-                        new Date(System.currentTimeMillis()+864400000)
-                )
+                        new Date(System.currentTimeMillis()+jwtProperties.expireSeconds()*1000)
+                        )
                 .signWith(getKey())
                 .compact();
     }
-    public String getGmail(String token){
+    public String getEmail(String token){
         return Jwts.parser()
                 .verifyWith(getKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
-                .get("gmail",String.class);
+                .get("email",String.class);
     }
-    public Role getRole(String token){
-        String role= Jwts.parser()
+    public List<String> getAuthorities(String token){
+        List authorities= Jwts.parser()
                 .verifyWith(getKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
-                .get("role", String.class)
+                .get("authorities", List.class)
                 ;
-        return Role.valueOf(role);
+        return authorities;
     }
     public UUID userid(String token ){
         String subject=Jwts.parser()

@@ -1,5 +1,6 @@
 package ecommerce.project.entity;
 
+import ecommerce.project.entity.enums.ProductStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,6 +26,8 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+    @Builder.Default
+    private ProductStatus status = ProductStatus.ACTIVE;
 
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "product")
     private List<Image>images;

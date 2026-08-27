@@ -2,12 +2,11 @@ package ecommerce.project.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class CategoryNotFoundException extends BusinessException{
+public class CategoryNotFoundException extends ResourceNotFoundException{
     public CategoryNotFoundException(){
         super(
-                "CATEGORY NOT FOUND",
-                "Provided other name",
-                HttpStatus.NOT_FOUND
+                "CATEGORY_NOT_FOUND",
+                "cannot find the category"
         );
     }
 }
