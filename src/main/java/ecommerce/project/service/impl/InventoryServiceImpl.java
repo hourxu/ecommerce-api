@@ -32,9 +32,8 @@ public class InventoryServiceImpl implements InventoryService {
         Product product= productRepository.findById(request.productId()).orElseThrow(
                 ProductNotFoundException::new
         );
-        String combinedSize= request.size().trim().toUpperCase();
         Optional<Inventory> existing = inventoryRepository
-                .findByProductIdAndSize(request.productId(), combinedSize);
+                .findByProductIdAndSize(request.productId(), request.size());
 
         Inventory saved;
         ///check data in db if have value same
@@ -55,7 +54,7 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
-    public List<InventoryResponse> getall() {
+    public List<InventoryResponse> getAll() {
         List<Inventory>inventories=inventoryRepository.findAll();
         return inventories.stream().map(inventoryMapper::toInventoryResponse).toList();
     }

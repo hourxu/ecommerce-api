@@ -1,4 +1,4 @@
-package ecommerce.project.entity;
+package ecommerce.project.entity.enums;
 
 public enum CartStatus {
     ACTIVE,

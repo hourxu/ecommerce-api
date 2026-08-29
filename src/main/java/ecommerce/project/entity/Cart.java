@@ -1,5 +1,6 @@
 package ecommerce.project.entity;
 
+import ecommerce.project.entity.enums.CartStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

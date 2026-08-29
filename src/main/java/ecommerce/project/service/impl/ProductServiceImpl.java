@@ -5,8 +5,8 @@ import ecommerce.project.dto.product.ProductDetail;
 import ecommerce.project.dto.product.ProductRequest;
 import ecommerce.project.dto.product.ProductResponse;
 import ecommerce.project.entity.Category;
-import ecommerce.project.entity.Inventory;
 import ecommerce.project.entity.Product;
+import ecommerce.project.entity.enums.ProductStatus;
 import ecommerce.project.exception.CategoryNotFoundException;
 import ecommerce.project.exception.DeleteSuccessException;
 import ecommerce.project.exception.ProductAlreadyExistedException;
@@ -20,7 +20,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 @Service
@@ -44,7 +43,7 @@ public class ProductServiceImpl implements ProductService {
             throw new ProductAlreadyExistedException();
         }
 
-        Product product =productMapper.toProduct(request,category);
+        Product product = productMapper.toProduct(request,category);
         Product save=productRepository.save(product);
         return productMapper.toProductResponse(save);
     }
@@ -69,7 +68,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     //filter product
-    public List<ProductResponse> getid(UUID categoryId) {
+    public List<ProductResponse> getByCategoryId(UUID categoryId) {
         List<Product> products ;
         //check id of category
         if (categoryId != null){
@@ -94,7 +93,7 @@ public class ProductServiceImpl implements ProductService {
     }
     @Override
     //show product of inventory
-    public ProductDetail productDetail(UUID id) {
+    public ProductDetail getById(UUID id) {
        Product product= productRepository.findById(id)
                .orElseThrow(ProductNotFoundException::new);
        List<InventoryResponse>inventoryResponses=product// check id of product null show nothing , but product has id show data from inventory
@@ -107,12 +106,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductResponse deletedId(UUID id) {
+    @Transactional
+    public void deleteById(UUID id) {
 
         Product product=productRepository.findById(id).
                 orElseThrow(ProductNotFoundException::new);
-        productRepository.deleteById(id);
-        throw new DeleteSuccessException();
+        product.setStatus(ProductStatus.INACTIVE);
     }
 
 }

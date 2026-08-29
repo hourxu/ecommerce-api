@@ -2,12 +2,11 @@ package ecommerce.project.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class InventoryNotFoundException extends BusinessException{
+public class InventoryNotFoundException extends ResourceNotFoundException{
     public InventoryNotFoundException(){
         super(
-                "Inventory not found",
-                "Inventory not found",
-                HttpStatus.NOT_FOUND
+                "INVENTORY_NOT_FOUND",
+                "inventory not found"
         );
     }
 }
