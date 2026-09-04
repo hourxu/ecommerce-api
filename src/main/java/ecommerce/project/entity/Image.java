@@ -18,8 +18,11 @@ public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private String image_url;
+    private String imageUrl;
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
+    @OneToOne
+    @JoinColumn(name = "profile_id")
+    private Profile profile;
 }

@@ -1,6 +1,6 @@
 package ecommerce.project.config;
 
-import ecommerce.project.dto.user.Role;
+import ecommerce.project.entity.enums.Role;
 import ecommerce.project.entity.User;
 import ecommerce.project.respositity.UserRepository;
 import org.springframework.boot.CommandLineRunner;

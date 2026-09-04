@@ -3,6 +3,8 @@ package ecommerce.project.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -26,4 +28,7 @@ public class Inventory {
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
+
+    @OneToMany(mappedBy = "inventory")
+    List<OrderItem>orderItems=new ArrayList<>();
 }

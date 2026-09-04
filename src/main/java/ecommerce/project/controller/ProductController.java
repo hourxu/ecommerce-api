@@ -1,16 +1,22 @@
 package ecommerce.project.controller;
 
+import ecommerce.project.dto.ImageResponse;
 import ecommerce.project.dto.TestRequest;
 import ecommerce.project.dto.product.ProductDetail;
 import ecommerce.project.dto.product.ProductRequest;
 import ecommerce.project.dto.product.ProductResponse;
+import ecommerce.project.entity.Image;
+import ecommerce.project.service.ImageService;
 import ecommerce.project.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.EOFException;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,7 +25,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
-
+    private final ImageService imageServicel;
     @PostMapping
     public ResponseEntity<ProductResponse> create(@RequestBody @Valid ProductRequest request){
         return new ResponseEntity<>(
@@ -28,6 +34,7 @@ public class ProductController {
         );
     }
     //update
+    //id product
     @PutMapping("{id}")
     public ResponseEntity<ProductResponse>update(@PathVariable UUID id,@RequestBody ProductRequest request){
         return new ResponseEntity<>(

@@ -5,7 +5,7 @@ import ecommerce.project.security.jwt.JwtService;
 import ecommerce.project.dto.user.LoginRequest;
 import ecommerce.project.dto.user.AuthenticationResponse;
 import ecommerce.project.dto.user.RegisterRequest;
-import ecommerce.project.dto.user.Role;
+import ecommerce.project.entity.enums.Role;
 import ecommerce.project.entity.User;
 import ecommerce.project.exception.UserAlreadyExistException;
 import ecommerce.project.respositity.UserRepository;

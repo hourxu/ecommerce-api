@@ -49,6 +49,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/v1/inventories/**").hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/inventories/**").hasAnyRole("ADMIN")
 
+                        .requestMatchers(HttpMethod.POST,"/api/v1/images/**").hasAnyRole("USER","ADMIN")
                         .anyRequest().authenticated());
 
         http.addFilterBefore(

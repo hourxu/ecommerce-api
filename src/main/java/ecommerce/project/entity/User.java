@@ -1,9 +1,11 @@
 package ecommerce.project.entity;
 
-import ecommerce.project.dto.user.Role;
+import ecommerce.project.entity.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -26,5 +28,9 @@ public class User {
 
     @OneToOne
     private Cart cart;
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    List<Order>orders=new ArrayList<>();
 
+    @OneToOne
+    private Profile profile;
 }

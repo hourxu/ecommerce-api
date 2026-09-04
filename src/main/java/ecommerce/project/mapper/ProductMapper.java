@@ -1,5 +1,6 @@
 package ecommerce.project.mapper;
 
+import ecommerce.project.dto.ImageResponse;
 import ecommerce.project.dto.inventory.InventoryResponse;
 import ecommerce.project.dto.product.ProductRequest;
 import ecommerce.project.dto.product.ProductResponse;
@@ -31,8 +32,14 @@ public class ProductMapper {
         List<InventoryResponse>inventoryResponses=product.getInventory()==null?List.of()
                 :product.getInventory().stream().map(inventoryMapper::toInventoryResponse)
                 .toList();
+        List<ImageResponse>imageResponses=product.getImages()==null?List.of()
+                :product.getImages().stream().map(image ->new ImageResponse(
+                        image.getId(),
+                        image.getImageUrl()
+        )).toList();
             return new ProductResponse(
                 product.getId(),
+                imageResponses,
                 product.getName(),
                 product.getPrice(),
                 product.getDescription(),

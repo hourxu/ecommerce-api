@@ -1,6 +1,6 @@
 package ecommerce.project.security.jwt;
 
-import ecommerce.project.dto.user.Role;
+import ecommerce.project.entity.enums.Role;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +39,7 @@ public class JwtService {
                 .signWith(getKey())
                 .compact();
     }
+    /// these 3 put information into token
     public String getEmail(String token){
         return Jwts.parser()
                 .verifyWith(getKey())

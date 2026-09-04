@@ -28,7 +28,11 @@ public class Cart {
     @Enumerated(EnumType.STRING)
     CartStatus status;
 
-    @OneToMany(mappedBy = "cart")
+    @OneToMany(
+            mappedBy = "cart",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     List<CartItem> cartItems = new ArrayList<>();
 
 
