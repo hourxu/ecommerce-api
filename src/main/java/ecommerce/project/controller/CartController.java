@@ -19,18 +19,17 @@ public class CartController {
     private final CartServiceImpl cartService;
 
     @PostMapping
-    public ResponseEntity<ResponseCart> addcart(@RequestBody AddCartItemRequest request){
+    public ResponseEntity<ResponseCart> addToCart(@RequestBody AddCartItemRequest request){
         cartService.addCartItem(request);
         return ResponseEntity.ok().build();
     }
-    @DeleteMapping
-    public ResponseEntity<Void>delete(@RequestBody RemoveCartItemRequest request){
+    @PostMapping
+    public ResponseEntity<Void>removeCartItem(@RequestBody RemoveCartItemRequest request){
         cartService.removeCartItem(request);
         return ResponseEntity.ok().build();
     }
     @GetMapping
-
-    public ResponseEntity<List<?>>getall(){
+    public ResponseEntity<List<?>>getAll(){
      return new ResponseEntity<>(
              cartService.getall(),
              HttpStatus.OK
