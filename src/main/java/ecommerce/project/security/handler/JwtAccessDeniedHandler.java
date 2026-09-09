@@ -12,6 +12,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 @Component
@@ -30,7 +31,7 @@ public class JwtAccessDeniedHandler
 
         ErrorResponse error =
                 new ErrorResponse(
-                        OffsetDateTime.now(),
+                        LocalDateTime.now(),
                         HttpStatus.FORBIDDEN.value(),
                         "FORBIDDEN",
                         "You do not have permission to perform this operation.",

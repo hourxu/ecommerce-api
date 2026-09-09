@@ -49,19 +49,19 @@ public class GlobalExceptionHandler {
         );
     }
 
-        @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleUnexpected(
-            Exception ex,
-            HttpServletRequest request
-    ) {
-
-        return build(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                "INTERNAL_SERVER_ERROR",
-                ex.getMessage(),
-                request
-        );
-    }
+//        @ExceptionHandler(Exception.class)
+//    public ResponseEntity<ErrorResponse> handleUnexpected(
+//            Exception ex,
+//            HttpServletRequest request
+//    ) {
+//
+//        return build(
+//                HttpStatus.INTERNAL_SERVER_ERROR,
+//                "INTERNAL_SERVER_ERROR",
+//                ex.getMessage(),
+//                request
+//        );
+//    }
 
     private ResponseEntity<ErrorResponse> build(
             HttpStatus status,
@@ -72,7 +72,7 @@ public class GlobalExceptionHandler {
 
         ErrorResponse response =
                 new ErrorResponse(
-                        OffsetDateTime.now(),
+                        null,
                         status.value(),
                         code,
                         message,

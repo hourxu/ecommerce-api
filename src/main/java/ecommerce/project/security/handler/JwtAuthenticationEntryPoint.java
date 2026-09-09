@@ -13,6 +13,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 @Component
@@ -31,7 +32,7 @@ public class JwtAuthenticationEntryPoint
 
         ErrorResponse error =
                 new ErrorResponse(
-                        OffsetDateTime.now(),
+                        null,
                         HttpStatus.UNAUTHORIZED.value(),
                         "UNAUTHORIZED",
                         "Authentication is required.",

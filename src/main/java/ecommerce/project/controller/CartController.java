@@ -23,7 +23,7 @@ public class CartController {
         cartService.addCartItem(request);
         return ResponseEntity.ok().build();
     }
-    @PostMapping
+    @DeleteMapping
     public ResponseEntity<Void>removeCartItem(@RequestBody RemoveCartItemRequest request){
         cartService.removeCartItem(request);
         return ResponseEntity.ok().build();

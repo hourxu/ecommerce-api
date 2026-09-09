@@ -22,10 +22,6 @@ public class ProfileSerivceImpL implements ProfileService {
     private final UserRepository userRepository;
     @Override
     public ProfileResponse createProfile(ProfileRequest request) {
-        System.out.println("firstName = " + request.firstName());
-        System.out.println("lastName = " + request.lastName());
-        System.out.println("telPhone = " + request.telPhone());
-        System.out.println("gender = " + request.gender());
         User user = checkUser();
 
         Profile profile = new Profile();

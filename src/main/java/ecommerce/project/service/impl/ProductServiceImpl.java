@@ -111,7 +111,8 @@ public class ProductServiceImpl implements ProductService {
 
         Product product=productRepository.findById(id).
                 orElseThrow(ProductNotFoundException::new);
-        product.setStatus(ProductStatus.INACTIVE);
+        productRepository.deleteById(id);
+
     }
 
 }

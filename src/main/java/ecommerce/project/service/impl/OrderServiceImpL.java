@@ -4,8 +4,8 @@ import ecommerce.project.dto.order.OrderItemResponse;
 import ecommerce.project.dto.order.OrderResponse;
 import ecommerce.project.entity.*;
 import ecommerce.project.entity.enums.CartStatus;
-import ecommerce.project.exception.CartNotFoundException;
-import ecommerce.project.exception.UserNotFoundException;
+import ecommerce.project.entity.enums.OrderStatus;
+import ecommerce.project.exception.*;
 import ecommerce.project.mapper.OrderMapper;
 import ecommerce.project.respositity.CartRepository;
 import ecommerce.project.respositity.OrderRepository;
@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +40,7 @@ public class OrderServiceImpL implements OrderService {
         Order order= new Order();
         order.setUser(user);//store user who?
         order.setCreateAt(LocalDateTime.now());
+        order.setStatus(OrderStatus.PENDING);
         BigDecimal total=BigDecimal.ZERO;
 
         //======convert cartItem to orderItem
@@ -63,6 +65,7 @@ public class OrderServiceImpL implements OrderService {
         return new OrderResponse(
                 order.getId(),
                 order.getTotalPrice(),
+                order.getStatus(),
                 order.getCreateAt(),
                 items
         );
@@ -82,11 +85,19 @@ public class OrderServiceImpL implements OrderService {
                     return new OrderResponse(
                             order.getId(),
                             order.getTotalPrice(),
+                            order.getStatus(),
                             order.getCreateAt(),
                             items
                     );
                 })
                 .toList();
+    }
+
+    @Override
+    public OrderResponse deleted(UUID id) {
+        Order order=orderRepository.findById(id).orElseThrow(OrderNotFoundException::new);
+        orderRepository.deleteById(id);
+        throw new DeleteSuccessException();
     }
 
     private User extractUser(){

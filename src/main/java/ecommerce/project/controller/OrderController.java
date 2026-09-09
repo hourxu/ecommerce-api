@@ -1,16 +1,15 @@
 package ecommerce.project.controller;
 
 import ecommerce.project.dto.order.OrderResponse;
+import ecommerce.project.entity.Order;
 import ecommerce.project.service.OrderService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,6 +17,7 @@ import java.util.List;
 public class OrderController {
     private final OrderService orderService;
     @PostMapping
+    //do not need requestBody because the cart has already requestBody
     public ResponseEntity<OrderResponse>createOrder(){
         orderService.createOrder();
         return ResponseEntity.ok().build();
@@ -25,5 +25,9 @@ public class OrderController {
     @GetMapping
     public ResponseEntity<List<OrderResponse>>getall(){
         return ResponseEntity.ok(orderService.getall());
+    }@DeleteMapping("{id}")
+    public ResponseEntity<OrderResponse>deleted(@PathVariable UUID id){
+        orderService.deleted(id);
+        return ResponseEntity.ok().build();
     }
 }

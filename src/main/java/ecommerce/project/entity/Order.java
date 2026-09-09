@@ -1,5 +1,6 @@
 package ecommerce.project.entity;
 
+import ecommerce.project.entity.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +29,11 @@ public class Order {
     private BigDecimal totalPrice;
     private LocalDateTime createAt;
 
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
     @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
     private List<OrderItem>orderItems=new ArrayList<>();
+
+    @OneToOne(mappedBy = "order")
+    private Payment payment;
 }
