@@ -1,5 +1,6 @@
 package ecommerce.project.dto.order;
 
+import ecommerce.project.dto.payment.PaymentResponse;
 import ecommerce.project.entity.enums.OrderStatus;
 
 import java.math.BigDecimal;
@@ -12,7 +13,8 @@ public record OrderResponse(
         BigDecimal totalPrice,
         OrderStatus orderStatus,
         LocalDateTime createAt,
-        List<OrderItemResponse> orderItemResponses
+        List<OrderItemResponse> orderItemResponses,
+        PaymentResponse paymentResponse
 ){
 
 }

@@ -17,6 +17,7 @@ import ecommerce.project.respositity.CartRepository;
 import ecommerce.project.respositity.InventoryRepository;
 import ecommerce.project.respositity.UserRepository;
 import ecommerce.project.service.CartService;
+import io.jsonwebtoken.security.Jwks;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -24,6 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -46,12 +48,20 @@ public class CartServiceImpl implements CartService {
                 )
                 .orElseGet(()->createNewCart(user));//solve problem of duplicate user_id
         Inventory inventory = inventoryRepository.findById(request.inventoryId()).orElseThrow(InventoryNotFoundException::new);
-
-        CartItem cartItem = new CartItem();
-        cartItem.setCart(cart);
-        cartItem.setInventory(inventory);
-        cartItem.setQuantity(request.quantity());
-      cartItemRepository.save(cartItem);
+        Optional<CartItem>existing=cartItemRepository.findByCart_IdAndInventory_Id(cart.getId(),inventory.getId());
+        if (existing.isPresent()){
+            CartItem cartItem=existing.get();
+            cartItem.setQuantity(
+                    cartItem.getQuantity()+request.quantity()
+            );
+            cartItemRepository.save(cartItem);
+        }else {
+            CartItem cartItem = new CartItem();
+            cartItem.setCart(cart);
+            cartItem.setInventory(inventory);
+            cartItem.setQuantity(request.quantity());
+            cartItemRepository.save(cartItem);
+        }
     }
 
     @Override
@@ -65,8 +75,7 @@ public class CartServiceImpl implements CartService {
         Inventory inventory = inventoryRepository.findById(
                 request.inventoryId()).orElseThrow(InventoryNotFoundException::new);
 
-        CartItem cartItem = cartItemRepository.findByInventory_Id(
-                request.inventoryId()).orElseThrow(CartNotFoundException::new);
+        CartItem cartItem= cartItemRepository.findByCart_IdAndInventory_Id(cart.getId(),request.inventoryId()).orElseThrow(CartNotFoundException::new);
         cart.getCartItems().remove(cartItem);
     }
 

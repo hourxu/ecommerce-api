@@ -2,17 +2,23 @@ package ecommerce.project.service.impl;
 
 import ecommerce.project.dto.order.OrderItemResponse;
 import ecommerce.project.dto.order.OrderResponse;
+import ecommerce.project.dto.payment.PaymentResponse;
+import ecommerce.project.dto.payment.RequestMethodPayment;
 import ecommerce.project.entity.*;
 import ecommerce.project.entity.enums.CartStatus;
 import ecommerce.project.entity.enums.OrderStatus;
+import ecommerce.project.entity.enums.PaymentMethod;
 import ecommerce.project.exception.*;
 import ecommerce.project.mapper.OrderMapper;
 import ecommerce.project.respositity.CartRepository;
 import ecommerce.project.respositity.OrderRepository;
+import ecommerce.project.respositity.PaymentRepository;
 import ecommerce.project.respositity.UserRepository;
 import ecommerce.project.service.OrderService;
+import ecommerce.project.service.PaymentService;
+import ecommerce.project.service.WalletDepositService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -29,14 +35,20 @@ public class OrderServiceImpL implements OrderService {
     private final CartRepository cartRepository;
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
+    private final PaymentService paymentService;
+    private final PaymentRepository paymentRepository;
+    private final WalletDepositService walletDepositService;
     @Override
-    public OrderResponse createOrder() {
+    @Transactional
+    public OrderResponse createOrder(RequestMethodPayment requestMethodPayment) {
         User   user=extractUser();//check who are you
         Cart cart=cartRepository.findFirstByUser_IdAndStatus(
                 user.getId(),
                 CartStatus.ACTIVE
         ).orElseThrow(CartNotFoundException::new);//first add to cart
         //create order
+
+
         Order order= new Order();
         order.setUser(user);//store user who?
         order.setCreateAt(LocalDateTime.now());
@@ -55,11 +67,19 @@ public class OrderServiceImpL implements OrderService {
         }
         order.setTotalPrice(total);
 
-        orderRepository.save(order);
+        Order savedOrder =  orderRepository.save(order);
+        cart.setStatus(CartStatus.CHECKED_OUT);
+        PaymentResponse payment = null;
+        if(requestMethodPayment.paymentMethod() == PaymentMethod.WALLET){
+            walletDepositService.decreaseBalance(order.getId());
+        }else {
+             payment = paymentService.createPayment(savedOrder.getId());
+        }
         //====convert orderItem to orderItemResponse
         List<OrderItemResponse> items = order.getOrderItems().stream().map(
                 orderMapper::toResponse
         ).toList();
+
 
         // Return response
         return new OrderResponse(
@@ -67,7 +87,8 @@ public class OrderServiceImpL implements OrderService {
                 order.getTotalPrice(),
                 order.getStatus(),
                 order.getCreateAt(),
-                items
+                items,
+                payment
         );
     }
 
@@ -81,14 +102,15 @@ public class OrderServiceImpL implements OrderService {
                             order.getOrderItems()
                                     .stream()
                                     .map(orderMapper::toResponse).toList();
-
+                    PaymentResponse payment= paymentRepository.findByOrderId(order.getId())
+                                                                .map(this::toResponse).orElse(null);
                     return new OrderResponse(
                             order.getId(),
                             order.getTotalPrice(),
                             order.getStatus(),
                             order.getCreateAt(),
-                            items
-                    );
+                            items,
+                            payment);
                 })
                 .toList();
     }
@@ -100,9 +122,40 @@ public class OrderServiceImpL implements OrderService {
         throw new DeleteSuccessException();
     }
 
+    @Override
+    public List<OrderResponse> history() {
+      User user=extractUser();
+      List<Order>orders=orderRepository.findByUser_IdAndStatusOrderByCreateAtDesc(user.getId(),OrderStatus.PAID);
+      return orders.stream().map(
+              item->{
+                  List<OrderItemResponse>orderItemResponses=item.getOrderItems().stream().map(
+                          orderMapper::toResponse
+                  ).toList();
+
+                  return new OrderResponse(
+                          item.getId(),
+                          item.getTotalPrice(),
+                          item.getStatus(),
+                          item.getCreateAt(),
+                          orderItemResponses,
+                          null
+                  );
+              }
+      ).toList();
+    }
+
+
     private User extractUser(){
         Authentication auth= SecurityContextHolder.getContext().getAuthentication();
         String email=auth.getName();
         return userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    }
+    private PaymentResponse toResponse(Payment payment){
+        return new PaymentResponse(
+                payment.getQrCode(),
+                payment.getMD5(),
+                payment.getPaymentStatus(),
+                payment.getDeeplink(),
+                payment.getDeeplinkaba());
     }
 }

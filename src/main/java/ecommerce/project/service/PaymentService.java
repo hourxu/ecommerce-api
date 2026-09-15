@@ -6,4 +6,5 @@ import java.util.UUID;
 
 public interface PaymentService {
     PaymentResponse createPayment(UUID orderId);
+    PaymentResponse checkPayment(UUID orderId);
 }

@@ -1,5 +1,6 @@
 package ecommerce.project.controller;
 
+import ecommerce.project.dto.order.OrderResponse;
 import ecommerce.project.dto.payment.PaymentResponse;
 import ecommerce.project.service.PaymentService;
 import ecommerce.project.service.impl.paymentGetway.OrderPaymentService;
@@ -11,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -20,13 +22,14 @@ public class PaymentController {
     private final PaymentService paymentService;
     private final OrderPaymentService orderPaymentService;
 
-    @PostMapping("{orderId}")
-    public ResponseEntity<PaymentResponse> createQR(@PathVariable UUID orderId){
-        return ResponseEntity.ok(paymentService.createPayment(orderId));
+    @GetMapping("/{orderId}")
+    public ResponseEntity<PaymentResponse>checkPayment(@PathVariable UUID orderId){
+        return ResponseEntity.ok(paymentService.checkPayment(orderId));
     }
     @PostMapping("/ImageQR")
     public ResponseEntity<byte[]>generate(@RequestBody KHQRData khqrData) throws Exception{
             byte[] image= orderPaymentService.generateQr(khqrData.getQr());
             return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(image);
     }
+
 }

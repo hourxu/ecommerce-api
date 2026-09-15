@@ -2,6 +2,7 @@ package ecommerce.project.entity;
 
 import ecommerce.project.entity.enums.PaymentStatus;
 import jakarta.persistence.*;
+import kh.gov.nbc.bakong_khqr.model.GenerateDeepLinkBody;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,6 +35,11 @@ public class Payment {
 
     private LocalDateTime createAt;
 
+    @Column(columnDefinition = "TEXT")
+    private String deeplink;
+
+    @Column(columnDefinition = "TEXT")
+    private String deeplinkaba;
     @OneToOne
     @JoinColumn(name = "order_id",nullable = false,unique = true)
     private Order order;

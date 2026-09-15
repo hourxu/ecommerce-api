@@ -1,8 +1,6 @@
 package ecommerce.project.config;
 
-
 import ecommerce.project.security.jwt.JwtProperties;
-import io.github.tongbora.bakong.config.BakongProperties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -15,17 +13,33 @@ import org.springframework.web.client.RestClient;
 @EnableConfigurationProperties(JwtProperties.class)
 public class BeanConfig {
 
-    @Value("${bakong.token}")
-    private String token;
-    @Value("${bakong.base-url}")
-    private String baseUrl;
+    @Value("${aba.base-url}")
+    private String baseUrlAba;
 
     @Bean
-    public RestClient restClient(){
+    public RestClient restClientaba() {
+
         return RestClient.builder()
-                .baseUrl(baseUrl)
-                .defaultHeader(HttpHeaders.AUTHORIZATION,token)
-                .defaultHeader(HttpHeaders.ACCEPT,MediaType.APPLICATION_JSON_VALUE)
+                .baseUrl(baseUrlAba)
+                .defaultHeader(
+                        HttpHeaders.ACCEPT,
+                        MediaType.APPLICATION_JSON_VALUE
+                )
+                .build();
+    }
+    @Bean
+    public RestClient restClientBaKong(
+            @Value("${bakong.base-url}") String baseUrlbakong,
+            @Value("${bakong.token-Bakong}") String bakongToken) {
+
+        if (baseUrlbakong == null || baseUrlbakong.isBlank()) {
+            throw new IllegalStateException("bakong.base-url is not configured!");
+        }
+
+        return RestClient.builder()
+                .baseUrl(baseUrlbakong)
+                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + bakongToken)
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
     }
 }

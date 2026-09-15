@@ -9,4 +9,8 @@ import java.util.UUID;
 public interface CartItemRepository extends JpaRepository<CartItem, UUID> {
     //=====The value might exist, or it might not exist.
     Optional<CartItem> findByInventory_Id(UUID inventoryId);
+    Optional<CartItem> findByCart_IdAndInventory_Id(
+            UUID cartId,
+            UUID inventoryId
+    );
 }

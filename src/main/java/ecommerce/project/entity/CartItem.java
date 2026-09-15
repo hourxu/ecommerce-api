@@ -13,7 +13,15 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "cart_items")
+@Table(
+        name = "cart_items",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_cart_inventory",
+                        columnNames = {"cart_id", "inventory_id"}
+                )
+        }
+)
 public class CartItem {
 
     @Id
@@ -24,7 +32,8 @@ public class CartItem {
     @JoinColumn(name = "cart_id")
     private Cart cart;
 
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "inventory_id")
     private Inventory inventory;
 
     private Integer quantity;
