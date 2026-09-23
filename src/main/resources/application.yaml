@@ -18,16 +18,19 @@ spring:
 
 server:
   port: 8081
+  server: 0.0.0.0
 app:
   jwt:
     secret-key: fjaskhdfalskfhlaksfhlaksfa123456
-    expire-seconds: 864400
+    access-expire-seconds:  604800
+    refresh-expire-seconds: 604800
 cloudflare:
   r2:
     account-id: cc78e3f856c6792852fa53557bda3676
     access-key: 6b1f42c18ccd1756a8aef22f9f3911e8
     secret-key: fa63959a8bd24619c53fa01b3e890bcf54138ee1b879f1b5d01f8d393491a22d
     bucket: uploadimage
+    public-url: https://pub-62c73c1bf764486499dac7b7a08c5820.r2.dev
 bakong:
   account-id: bunhour_ti@bkrt
   base-url: https://api-bakong.nbc.gov.kh/

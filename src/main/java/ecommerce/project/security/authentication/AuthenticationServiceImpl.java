@@ -1,5 +1,6 @@
 package ecommerce.project.security.authentication;
 
+import ecommerce.project.dto.user.RefreshTokenRequest;
 import ecommerce.project.exception.UserNotFoundException;
 import ecommerce.project.security.jwt.JwtService;
 import ecommerce.project.dto.user.LoginRequest;
@@ -14,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -39,14 +42,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
         User savedUser = userRepository.save(user);
 
-        String accessToken = jwtService.generateToken(
+        String accessToken = jwtService.generateAccessToken(
                 user.getId(),
                 user.getEmail(),
                 user.getRole()
         );
+        String refreshToken= jwtService.generateRefreshToken(user.getId());
         return new AuthenticationResponse(
                 accessToken,
-                jwtProperties.expireSeconds()
+                refreshToken,
+                jwtProperties.accessExpireSeconds()
         );
     }
 
@@ -64,13 +69,38 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new UserNotFoundException();
         }
 
-        String token = jwtService.generateToken(
+        String AccessToken = jwtService.generateAccessToken(
                 user.getId(),
                 user.getEmail(),
                 user.getRole()
         );
+            String refreshToken= jwtService.generateRefreshToken(user.getId());
+        return new AuthenticationResponse(
+                AccessToken,
+                refreshToken,
+                jwtProperties.accessExpireSeconds()
 
-        return new AuthenticationResponse(token,jwtProperties.expireSeconds());
+        );
+    }
+
+    @Override
+    public AuthenticationResponse refreshToken(RefreshTokenRequest request) {
+        String refreshToken=request.refreshToken();
+        if(!jwtService.isRefreshToken(refreshToken)){
+            throw new RuntimeException("Invalid refresh token");
+        }
+        UUID userId=jwtService.userid(refreshToken);
+        User user=userRepository.findByid(userId).orElseThrow(UserNotFoundException::new);
+        String newAccessToken= jwtService.generateAccessToken(
+                user.getId(),
+                user.getEmail(),
+                user.getRole()
+        );
+        return new AuthenticationResponse(
+                newAccessToken,
+                refreshToken,
+                jwtProperties.accessExpireSeconds()
+        );
     }
 
 }

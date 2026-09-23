@@ -1,10 +1,14 @@
 package ecommerce.project.service.impl;
 
 import ecommerce.project.dto.ImageResponse;
+import ecommerce.project.entity.Category;
 import ecommerce.project.entity.Image;
 import ecommerce.project.entity.Product;
 import ecommerce.project.entity.Profile;
+import ecommerce.project.exception.CategoryNotFoundException;
+import ecommerce.project.exception.ImageNotFound;
 import ecommerce.project.exception.ProductNotFoundException;
+import ecommerce.project.respositity.CategoryRepository;
 import ecommerce.project.respositity.ImageRepository;
 import ecommerce.project.respositity.ProductRepository;
 import ecommerce.project.respositity.ProfileRepository;
@@ -12,11 +16,13 @@ import ecommerce.project.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectAclRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
@@ -32,9 +38,11 @@ public class ImageServiceImpL implements ImageService {
     private final ImageRepository imageRepository;
     private final ProductRepository productRepository;
     private final ProfileRepository profileRepository;
+    private final CategoryRepository categoryRepository;
     @Value("${cloudflare.r2.bucket}")
     private String bucket;
-
+    @Value("${cloudflare.r2.public-url}")
+    private String publicUrl;
     @Override
     public ImageResponse UploadProduct(UUID Id, MultipartFile file) throws IOException {
         Product product=productRepository.findById(Id).orElseThrow(ProductNotFoundException::new);
@@ -85,5 +93,60 @@ public class ImageServiceImpL implements ImageService {
                 profile.getId(),
                 profile.getProfileImage()
         );
+    }
+
+    @Override
+    public ImageResponse UploadCategories(UUID categoriesID, MultipartFile file) throws IOException {
+        Category category=categoryRepository.findById(categoriesID).orElseThrow(CategoryNotFoundException::new);
+        String fileName=UUID.randomUUID()+"-"+file.getOriginalFilename();
+        String key="categories/"+fileName;
+
+        PutObjectRequest request=PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .contentType(file.getContentType()).build();
+        s3Client.putObject(
+                request,RequestBody.fromBytes(file.getBytes())
+        );
+        Image image=new Image();
+        image.setImageUrl(key);
+        image.setCategory(category);
+        imageRepository.save(image);
+        return new ImageResponse(
+                image.getId(),
+                publicUrl+"/"+image.getImageUrl()
+        );
+    }
+
+    @Override
+    public ImageResponse UpdateImage(UUID UpdateID, MultipartFile file) throws IOException {
+        Image image=imageRepository.findById(UpdateID).orElseThrow(ImageNotFound::new);
+
+        DeleteObjectRequest deleteObjectRequest=DeleteObjectRequest.builder()
+                .bucket(bucket)
+                .key(image.getImageUrl())
+                .build();
+        s3Client.deleteObject(deleteObjectRequest);
+        String fileName=UUID.randomUUID()+"/"+file.getOriginalFilename();
+        String key="category/"+fileName;
+
+        PutObjectRequest upload= PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .contentType(file.getContentType())
+                .build();
+
+        s3Client.putObject(
+                upload,
+                RequestBody.fromBytes(file.getBytes())
+        );
+
+        image.setImageUrl(key);
+        imageRepository.save(image);
+        return  new ImageResponse(
+                image.getId(),
+                publicUrl+"/"+key
+                );
+
     }
 }

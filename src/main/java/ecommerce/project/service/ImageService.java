@@ -11,4 +11,6 @@ import java.util.UUID;
 public interface ImageService {
     ImageResponse UploadProduct(UUID productId, MultipartFile file)throws IOException;
     ImageResponse UploadProfile(UUID Id, MultipartFile file)throws IOException;
+    ImageResponse UploadCategories(UUID categoriesID,MultipartFile file) throws IOException;
+    ImageResponse UpdateImage(UUID UpdateID,MultipartFile file) throws  IOException;
 }

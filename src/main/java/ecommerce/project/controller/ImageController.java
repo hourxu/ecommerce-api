@@ -15,6 +15,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ImageController {
     private final ImageService imageService;
+
+
     @PostMapping("/product/{Id}")
     public ResponseEntity<ImageResponse> upload(
             @PathVariable UUID Id,
@@ -36,5 +38,17 @@ public class ImageController {
 
         return ResponseEntity.ok(image);
     }
-
+    @PostMapping("/category/{id}")
+    public ResponseEntity<ImageResponse> UploadImage(
+            @PathVariable("id") UUID Id,
+            @RequestParam("file") MultipartFile file
+    )throws IOException{
+        ImageResponse imageResponse=imageService.UploadCategories(Id,file);
+        return ResponseEntity.ok(imageResponse);
+    }
+    @PutMapping("/category/{id}")
+    public ResponseEntity<ImageResponse>update(@PathVariable("id") UUID Id,@RequestParam("file")MultipartFile file) throws IOException {
+        ImageResponse imageResponse=imageService.UpdateImage(Id,file);
+        return ResponseEntity.ok(imageResponse);
+    }
 }

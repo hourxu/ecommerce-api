@@ -70,6 +70,8 @@ public class OrderServiceImpL implements OrderService {
         Order savedOrder =  orderRepository.save(order);
         cart.setStatus(CartStatus.CHECKED_OUT);
         PaymentResponse payment = null;
+
+
         if(requestMethodPayment.paymentMethod() == PaymentMethod.WALLET){
             walletDepositService.decreaseBalance(order.getId());
         }else {

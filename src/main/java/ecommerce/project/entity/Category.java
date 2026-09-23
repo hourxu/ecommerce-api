@@ -1,5 +1,6 @@
 package ecommerce.project.entity;
 
+import ecommerce.project.entity.enums.Gender;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,7 +20,15 @@ public class Category {
     private UUID id;
     private String name;
     private String description;
+
+
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "category")
     private List<Product> products= new ArrayList<>();
 
+
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+
+    @OneToOne(mappedBy = "category")
+    private Image image;
 }

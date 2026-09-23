@@ -118,7 +118,7 @@ public class WalletDepositServiceImpL implements WalletDepositService {
         if(wallet.getBalance().compareTo(amount)<=0){
             throw new RuntimeException("Balance not enough");
         }
-        wallet.setBalance(wallet.getBalance().subtract(amount));
+        wallet.setBalance(wallet.getBalance().subtract(amount));//balance - amount
 
         order.setStatus(OrderStatus.PAID);
         Payment payment= new Payment();

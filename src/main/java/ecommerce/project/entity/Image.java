@@ -25,4 +25,8 @@ public class Image {
     @OneToOne
     @JoinColumn(name = "profile_id")
     private Profile profile;
+
+    @OneToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 }

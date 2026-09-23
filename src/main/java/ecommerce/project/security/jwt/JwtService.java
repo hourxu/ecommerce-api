@@ -23,7 +23,7 @@ public class JwtService {
                 jwtProperties.secretKey().getBytes(StandardCharsets.UTF_8)
         );
     }
-    public String generateToken(
+    public String generateAccessToken(
             UUID userid,
             String gmail,
             Role role
@@ -32,12 +32,27 @@ public class JwtService {
                 .subject(userid.toString())
                 .claim("email",gmail)
                 .claim("authorities", List.of("ROLE_"+role.name()))
+                .claim("type","access")
                 .issuedAt(new Date())
                 .expiration(
-                        new Date(System.currentTimeMillis()+jwtProperties.expireSeconds()*1000)
+                        new Date(System.currentTimeMillis()+jwtProperties.accessExpireSeconds()*1000)
                         )
                 .signWith(getKey())
                 .compact();
+    }
+
+    public String generateRefreshToken(UUID userId){
+        return Jwts.builder()
+                .subject(userId.toString())
+                .claim("type","refresh")
+                .issuedAt(new Date())
+                .expiration(
+                        new Date(System.currentTimeMillis()+jwtProperties.refreshExpireSeconds()*1000)
+
+                )
+                .signWith(getKey())
+                .compact();
+
     }
     /// these 3 put information into token
     public String getEmail(String token){
@@ -66,5 +81,14 @@ public class JwtService {
                 .getPayload()
                 .getSubject();
         return UUID.fromString(subject);
+    }
+    public boolean isRefreshToken(String token){
+        String type=Jwts.parser()
+                .verifyWith(getKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("type",String.class);
+        return "refresh".equals(type);
     }
 }

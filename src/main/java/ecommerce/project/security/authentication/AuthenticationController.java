@@ -2,10 +2,13 @@ package ecommerce.project.security.authentication;
 
 import ecommerce.project.dto.user.LoginRequest;
 import ecommerce.project.dto.user.AuthenticationResponse;
+import ecommerce.project.dto.user.RefreshTokenRequest;
 import ecommerce.project.dto.user.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,5 +28,8 @@ public class AuthenticationController {
     public AuthenticationResponse login(@RequestBody LoginRequest request){
        return  userService.login(request);
     }
-
+    @PostMapping("/refresh")
+    public AuthenticationResponse refreshToken(@RequestBody RefreshTokenRequest request){
+        return userService.refreshToken(request);
+    }
 }
